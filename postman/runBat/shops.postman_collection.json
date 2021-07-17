@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "4108682b-27ff-473b-83bf-2f0694a4d056",
+		"name": "shops",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "createShop",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"test shop\",\r\n    \"address\": \"test address\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/shops/shops",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"shops"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/shops/shops",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"shops"
+					]
+				},
+				"description": "все магазины"
+			},
+			"response": []
+		}
+	]
+}

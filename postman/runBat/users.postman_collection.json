@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "4a402b43-0d86-4456-8cec-fcb081f2061f",
+		"name": "users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"user2\",\r\n    \"password\": \"user2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/shops/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"user11\",\r\n    \"password\": \"user11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/shops/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/shops/users/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

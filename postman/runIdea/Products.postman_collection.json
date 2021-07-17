@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "a85e17ae-45cc-4345-b2a9-dd64faf94830",
+		"name": "Products",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getProductsByCategory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/products?category=Milk products&name=m",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "Milk products"
+						},
+						{
+							"key": "name",
+							"value": "m",
+							"description": "optional"
+						}
+					]
+				},
+				"description": "просмотр списка товаров по категории с/без части наименования"
+			},
+			"response": []
+		},
+		{
+			"name": "createProduct",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"test\",\r\n    \"category\": {\r\n        \"name\": \"Fish\"\r\n    },\r\n    \"unit\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/products?name=test3&category=Fish&unit=test",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test3"
+						},
+						{
+							"key": "category",
+							"value": "Fish"
+						},
+						{
+							"key": "unit",
+							"value": "test"
+						}
+					]
+				},
+				"description": "создать продукт"
+			},
+			"response": []
+		},
+		{
+			"name": "updateProduct",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 24,\r\n    \"name\": \"test25\",\r\n    \"category\": {\r\n        \"name\": \"Fish2\"\r\n    },\r\n    \"unit\": \"test2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/products",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products"
+					]
+				},
+				"description": "изменить продукт"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/F:/java/senla/data.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/products/upload",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products",
+						"upload"
+					]
+				},
+				"description": "загрузка данных из csv-файла"
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/products/38",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products",
+						"38"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

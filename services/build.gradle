@@ -1,0 +1,17 @@
+
+group 'com.senla.courses.shops'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
+
+    implementation group: 'org.springframework', name: 'spring-web', version: '5.3.7'
+
+    implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.3.7.RELEASE'
+
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.0'
+
+    testImplementation group: 'org.springframework', name: 'spring-mock', version: '2.0.8'
+
+    compile project(':dao')
+}

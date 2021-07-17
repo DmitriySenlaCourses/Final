@@ -1,0 +1,44 @@
+{
+	"info": {
+		"_postman_id": "a70dbf36-9848-40cf-9d5a-b7810e4e6a59",
+		"name": "categories",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getAll",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/shops/categories",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"categories"
+					]
+				},
+				"description": "все категории товаров"
+			},
+			"response": []
+		}
+	]
+}

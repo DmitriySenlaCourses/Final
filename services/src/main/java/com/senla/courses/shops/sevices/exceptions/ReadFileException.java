@@ -1,0 +1,18 @@
+package com.senla.courses.shops.sevices.exceptions;
+
+public class ReadFileException extends RuntimeException {
+    public ReadFileException() {
+    }
+
+    public ReadFileException(String message) {
+        super(message);
+    }
+
+    public ReadFileException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ReadFileException(Throwable cause) {
+        super(cause);
+    }
+}

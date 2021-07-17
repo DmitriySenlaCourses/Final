@@ -1,0 +1,8 @@
+
+group 'com.senla.courses.shops'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation group: 'org.springframework', name: 'spring-web', version: '5.3.7'
+    compile project(':model')
+}

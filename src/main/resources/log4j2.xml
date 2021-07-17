@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <File name="rollingFileInfo" fileName="shopsLogInfo.log">
+            <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT"/>
+            <PatternLayout>
+                <Pattern>%d{dd.MM.yyyy HH:mm:ss} [%t} %-5level %logger - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        <File name="rollingFileWarn" fileName="shopsLogErr.log">
+            <ThresholdFilter level="WARN"/>
+            <PatternLayout>
+                <Pattern>%d{dd.MM.yyyy HH:mm:ss} [%t} %-5level %logger - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="rollingFileInfo"/>
+            <AppenderRef ref="rollingFileWarn"/>
+        </Root>
+    </Loggers>
+</Configuration>

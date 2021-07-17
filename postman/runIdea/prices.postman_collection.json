@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "284eec0d-de9b-4978-9f69-82d8c33e003a",
+		"name": "prices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "dymamics",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/prices/dynamics?product=Milk&shop=Evroopt&address=Hataevicha, 1&start=2021-06-21&end=2021-06-24",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"prices",
+						"dynamics"
+					],
+					"query": [
+						{
+							"key": "product",
+							"value": "Milk"
+						},
+						{
+							"key": "shop",
+							"value": "Evroopt"
+						},
+						{
+							"key": "address",
+							"value": "Hataevicha, 1"
+						},
+						{
+							"key": "start",
+							"value": "2021-06-21",
+							"description": "optional"
+						},
+						{
+							"key": "end",
+							"value": "2021-06-24",
+							"description": "optional"
+						}
+					]
+				},
+				"description": "динамика цен на продукт в магазине на заданный период времени или без него."
+			},
+			"response": []
+		},
+		{
+			"name": "getLastPrices",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/prices/comparing?product=Milk",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"prices",
+						"comparing"
+					],
+					"query": [
+						{
+							"key": "product",
+							"value": "Milk"
+						}
+					]
+				},
+				"description": "сравнение цен на продукт во всех магазинах"
+			},
+			"response": []
+		}
+	]
+}
