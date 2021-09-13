@@ -51,6 +51,16 @@ public class ShopServiceImpl implements ShopService {
         return all.stream().map(shop -> modelMapper.map(shop, ShopDto.class)).collect(Collectors.toList());
     }
 
+    @Override
+    public Shop findByNameAndAddress(String name, String address) {
+        return shopRepository.findByNameAndAddress(name, address);
+    }
+
+    @Override
+    public Shop save(Shop shop) {
+        return shopRepository.save(shop);
+    }
+
     private boolean isShopExists(ShopDto shopDto) {
         return shopRepository.findByNameAndAddress(shopDto.getName(), shopDto.getAddress()) != null;
     }

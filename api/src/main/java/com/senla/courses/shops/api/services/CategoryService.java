@@ -12,4 +12,7 @@ public interface CategoryService {
 
     List<CategoryDto> getAll();
 
+    Category findByName(String name);
+
+    Category save(Category category);
 }

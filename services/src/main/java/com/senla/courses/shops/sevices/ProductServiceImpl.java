@@ -1,10 +1,10 @@
 package com.senla.courses.shops.sevices;
 
+import com.senla.courses.shops.api.services.CategoryService;
+import com.senla.courses.shops.api.services.PriceService;
 import com.senla.courses.shops.api.services.ProductService;
-import com.senla.courses.shops.dao.CategoryRepository;
-import com.senla.courses.shops.dao.PriceRepository;
+import com.senla.courses.shops.api.services.ShopService;
 import com.senla.courses.shops.dao.ProductRepository;
-import com.senla.courses.shops.dao.ShopRepository;
 import com.senla.courses.shops.model.AllEntities;
 import com.senla.courses.shops.model.Category;
 import com.senla.courses.shops.model.Price;
@@ -40,19 +40,19 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
-    private ShopRepository shopRepository;
-    private PriceRepository priceRepository;
+    private CategoryService categoryService;
+    private ShopService shopService;
+    private PriceService priceService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository,
-                              ShopRepository shopRepository, PriceRepository priceRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService,
+                              ShopService shopService, PriceService priceService, ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
-        this.categoryRepository = categoryRepository;
-        this.priceRepository = priceRepository;
-        this.shopRepository = shopRepository;
+        this.categoryService = categoryService;
+        this.priceService = priceService;
+        this.shopService = shopService;
     }
 
     public ProductServiceImpl() {
@@ -98,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> findByCategoryAndName(String categoryName, String productName) {
-        Category foundCategory = categoryRepository.findByNameEquals(categoryName);
+        Category foundCategory = categoryService.findByName(categoryName);
         List<Product> list = null;
 
         if (foundCategory == null) {
@@ -115,6 +115,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product findByName(String name) {
+        return productRepository.findByNameEquals(name);
+    }
+
+    @Override
     public void uploadData(MultipartFile file) {
 
         List<AllEntities> list = csvToEntities(file);
@@ -125,17 +130,17 @@ public class ProductServiceImpl implements ProductService {
             Product product = allEntities.getProduct();
             Shop shop = allEntities.getShop();
 
-            Category categoryFromDb = categoryRepository.findByNameEquals(category.getName());
+            Category categoryFromDb = categoryService.findByName(category.getName());
             if (categoryFromDb == null) {
-                category = categoryRepository.save(category);
+                category = categoryService.save(category);
                 log.info(String.format("Create category %s", category.getName()));
             } else {
                 category = categoryFromDb;
             }
 
-            Shop shopFromDb = shopRepository.findByNameAndAddress(shop.getName(), shop.getAddress());
+            Shop shopFromDb = shopService.findByNameAndAddress(shop.getName(), shop.getAddress());
             if (shopFromDb == null) {
-                shop = shopRepository.save(shop);
+                shop = shopService.save(shop);
                 log.info(String.format("Create shop %s", shop.getName()));
             } else {
                 shop = shopFromDb;
@@ -153,13 +158,13 @@ public class ProductServiceImpl implements ProductService {
                 product = productFromDb;
             }
 
-            Price priceFromDb = priceRepository.findByProductAndShopsAndDate(product, shop, price.getDate());
+            Price priceFromDb = priceService.findByProductAndShopsAndDate(product, shop, price.getDate());
             if (priceFromDb == null) {
                 price.setProduct(product);
                 Set<Shop> shops = new HashSet<>();
                 shops.add(shop);
                 price.setShops(shops);
-                price = priceRepository.save(price);
+                price = priceService.save(price);
                 log.info(String.format("Create price %s, %s", price.getDate(), price.getValue()));
             } else {
                 price = priceFromDb;
@@ -168,11 +173,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private Category getCategory(ProductDto productDto) {
-        Category category = categoryRepository.findByNameEquals(productDto.getCategory().getName());
+        Category category = categoryService.findByName(productDto.getCategory().getName());
         if (category == null) {
             category = new Category();
             category.setName(productDto.getCategory().getName());
-            categoryRepository.save(category);
+            categoryService.save(category);
         }
         return category;
     }

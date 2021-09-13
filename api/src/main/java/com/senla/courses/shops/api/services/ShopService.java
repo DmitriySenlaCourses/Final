@@ -13,4 +13,7 @@ public interface ShopService {
 
     List<ShopDto> getAll();
 
+    Shop findByNameAndAddress(String name, String address);
+
+    Shop save(Shop shop);
 }

@@ -2,6 +2,8 @@ package com.senla.courses.shops.sevices;
 
 import com.senla.courses.shops.api.services.PriceService;
 import com.senla.courses.shops.api.services.PriceShop;
+import com.senla.courses.shops.api.services.ProductService;
+import com.senla.courses.shops.api.services.ShopService;
 import com.senla.courses.shops.dao.PriceRepository;
 import com.senla.courses.shops.dao.ProductRepository;
 import com.senla.courses.shops.dao.ShopRepository;
@@ -29,16 +31,16 @@ import java.util.Map;
 public class PriceServiceImpl implements PriceService {
 
     private PriceRepository priceRepository;
-    private ProductRepository productRepository;
-    private ShopRepository shopRepository;
+    private ProductService productService;
+    private ShopService shopService;
     private ModelMapper modelMapper;
 
     @Autowired
     public PriceServiceImpl(PriceRepository priceRepository, ModelMapper modelMapper,
-                            ProductRepository productRepository, ShopRepository shopRepository) {
+                            ProductService productService, ShopService shopService) {
         this.priceRepository = priceRepository;
-        this.productRepository = productRepository;
-        this.shopRepository = shopRepository;
+        this.productService = productService;
+        this.shopService = shopService;
         this.modelMapper = modelMapper;
     }
 
@@ -48,8 +50,8 @@ public class PriceServiceImpl implements PriceService {
     @Override
     public Map<LocalDate, BigDecimal> getDynamics(String productName, String shopName, String shopAddress, String start, String end) {
         Map<LocalDate, BigDecimal> map = new LinkedHashMap<>();
-        Product product = productRepository.findByNameEquals(productName);
-        Shop shop = shopRepository.findByNameAndAddress(shopName, shopAddress);
+        Product product = productService.findByName(productName);
+        Shop shop = shopService.findByNameAndAddress(shopName, shopAddress);
         if (product == null) {
             throw new EntityNotFoundException(String.format("Product %s not found", productName));
         }
@@ -70,12 +72,22 @@ public class PriceServiceImpl implements PriceService {
 
     @Override
     public List<PriceShop> getLastPrices(String productName) {
-        Product product = productRepository.findByNameEquals(productName);
+        Product product = productService.findByName(productName);
         if (product == null) {
             throw new EntityNotFoundException(String.format("Product %s not found", productName));
         }
         List<PriceShop> lastPrices = priceRepository.getLastPrices(product.getId());
         return lastPrices;
+    }
+
+    @Override
+    public Price findByProductAndShopsAndDate(Product product, Shop shop, LocalDate date) {
+        return priceRepository.findByProductAndShopsAndDate(product, shop, date);
+    }
+
+    @Override
+    public Price save(Price price) {
+        return priceRepository.save(price);
     }
 
     private LocalDate convertDate(String date) {

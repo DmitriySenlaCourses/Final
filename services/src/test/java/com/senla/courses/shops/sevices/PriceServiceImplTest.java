@@ -2,6 +2,8 @@ package com.senla.courses.shops.sevices;
 
 import com.senla.courses.shops.api.services.PriceService;
 import com.senla.courses.shops.api.services.PriceShop;
+import com.senla.courses.shops.api.services.ProductService;
+import com.senla.courses.shops.api.services.ShopService;
 import com.senla.courses.shops.dao.PriceRepository;
 import com.senla.courses.shops.dao.ProductRepository;
 import com.senla.courses.shops.dao.ShopRepository;
@@ -29,9 +31,9 @@ public class PriceServiceImplTest {
     @Mock
     private PriceRepository priceRepository;
     @Mock
-    private ProductRepository productRepository;
+    private ProductService productService;
     @Mock
-    private ShopRepository shopRepository;
+    private ShopService shopService;
 
     public PriceServiceImplTest() {
         MockitoAnnotations.openMocks(this);
@@ -47,14 +49,14 @@ public class PriceServiceImplTest {
 
         List<Price> prices = new ArrayList<>();
 
-        Mockito.when(productRepository.findByNameEquals(productName)).thenReturn(new Product());
-        Mockito.when(shopRepository.findByNameAndAddress(shopName, shopAddress)).thenReturn(new Shop());
+        Mockito.when(productService.findByName(productName)).thenReturn(new Product());
+        Mockito.when(shopService.findByNameAndAddress(shopName, shopAddress)).thenReturn(new Shop());
         Mockito.when(priceRepository.findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class))).thenReturn(prices);
 
         Map<LocalDate, BigDecimal> dynamics = priceService.getDynamics(productName, shopName, shopAddress, start, end);
 
-        Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(Mockito.anyString());
-        Mockito.verify(shopRepository, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(productService, Mockito.times(1)).findByName(Mockito.anyString());
+        Mockito.verify(shopService, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
         Mockito.verify(priceRepository, Mockito.times(1)).findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
     }
 
@@ -68,14 +70,14 @@ public class PriceServiceImplTest {
 
         List<Price> prices = new ArrayList<>();
 
-        Mockito.when(productRepository.findByNameEquals(productName)).thenReturn(null);
-        Mockito.when(shopRepository.findByNameAndAddress(shopName, shopAddress)).thenReturn(new Shop());
+        Mockito.when(productService.findByName(productName)).thenReturn(null);
+        Mockito.when(shopService.findByNameAndAddress(shopName, shopAddress)).thenReturn(new Shop());
         Mockito.when(priceRepository.findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class))).thenReturn(prices);
 
         Map<LocalDate, BigDecimal> dynamics = priceService.getDynamics(productName, shopName, shopAddress, start, end);
 
-        Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(Mockito.anyString());
-        Mockito.verify(shopRepository, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(productService, Mockito.times(1)).findByName(Mockito.anyString());
+        Mockito.verify(shopService, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
         Mockito.verify(priceRepository, Mockito.never()).findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
     }
 
@@ -89,14 +91,14 @@ public class PriceServiceImplTest {
 
         List<Price> prices = new ArrayList<>();
 
-        Mockito.when(productRepository.findByNameEquals(productName)).thenReturn(new Product());
-        Mockito.when(shopRepository.findByNameAndAddress(shopName, shopAddress)).thenReturn(null);
+        Mockito.when(productService.findByName(productName)).thenReturn(new Product());
+        Mockito.when(shopService.findByNameAndAddress(shopName, shopAddress)).thenReturn(null);
         Mockito.when(priceRepository.findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class))).thenReturn(prices);
 
         Map<LocalDate, BigDecimal> dynamics = priceService.getDynamics(productName, shopName, shopAddress, start, end);
 
-        Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(Mockito.anyString());
-        Mockito.verify(shopRepository, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(productService, Mockito.times(1)).findByName(Mockito.anyString());
+        Mockito.verify(shopService, Mockito.times(1)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
         Mockito.verify(priceRepository, Mockito.never()).findByProductAndShopsAndDateBetweenOrderByDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
     }
 
@@ -107,12 +109,12 @@ public class PriceServiceImplTest {
         product.setId(1L);
         List<PriceShop> priceShops = new ArrayList<>();
 
-        Mockito.when(productRepository.findByNameEquals(productName)).thenReturn(product);
+        Mockito.when(productService.findByName(productName)).thenReturn(product);
         Mockito.when(priceRepository.getLastPrices(1L)).thenReturn(priceShops);
 
         priceService.getLastPrices(productName);
 
-        Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(productName);
+        Mockito.verify(productService, Mockito.times(1)).findByName(productName);
         Mockito.verify(priceRepository, Mockito.times(1)).getLastPrices(1L);
     }
 
@@ -123,12 +125,12 @@ public class PriceServiceImplTest {
         product.setId(1L);
         List<PriceShop> priceShops = new ArrayList<>();
 
-        Mockito.when(productRepository.findByNameEquals(productName)).thenReturn(null);
+        Mockito.when(productService.findByName(productName)).thenReturn(null);
         Mockito.when(priceRepository.getLastPrices(1L)).thenReturn(priceShops);
 
         priceService.getLastPrices(productName);
 
-        Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(productName);
+        Mockito.verify(productService, Mockito.times(1)).findByName(productName);
         Mockito.verify(priceRepository, Mockito.never()).getLastPrices(1L);
     }
 }

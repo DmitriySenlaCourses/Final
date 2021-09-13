@@ -18,5 +18,7 @@ public interface ProductService {
 
     List<ProductDto> findByCategoryAndName(String categoryName, String productName);
 
+    Product findByName(String name);
+
     void uploadData(MultipartFile file);
 }
