@@ -80,13 +80,5 @@ public class ProductController {
     }
 
 
-    @PostMapping("/upload")
-    @ApiOperation(value = "Upload product from csv file")
-    @ApiResponses(value = {@ApiResponse(code = 204, message = "File upload successful"),
-            @ApiResponse(code = 400, message = "File read error")})
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> uploadData(@RequestParam(name = "file") MultipartFile file) {
-        productService.uploadData(file);
-        return ResponseEntity.noContent().build();
-    }
+
 }

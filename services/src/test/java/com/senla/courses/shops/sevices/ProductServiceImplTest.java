@@ -43,10 +43,6 @@ public class ProductServiceImplTest {
     @Mock
     private CategoryService categoryService;
     @Mock
-    private ShopService shopService;
-    @Mock
-    private PriceService priceService;
-    @Mock
     private ModelMapper modelMapper;
 
     public ProductServiceImplTest() {
@@ -221,56 +217,5 @@ public class ProductServiceImplTest {
         Mockito.verify(productRepository, Mockito.times(1)).findByCategoryAndNameContaining(category, productName);
         Mockito.verify(modelMapper, Mockito.times(2)).map(Mockito.any(Product.class), Mockito.eq(ProductDto.class));
         Assert.assertEquals(list.size(), returnedList.size());
-
-    }
-
-    @Test
-    public void uploadData() throws IOException {
-        MultipartFile multipartFile = new MockMultipartFile("test.csv", new FileInputStream(new File("src/test/resources/test.csv")));
-
-        Mockito.when(categoryService.findByName(Mockito.anyString())).thenReturn(new Category());
-        Mockito.when(categoryService.save(Mockito.any(Category.class))).thenReturn(new Category());
-        Mockito.when(shopService.findByNameAndAddress(Mockito.anyString(), Mockito.anyString())).thenReturn(new Shop());
-        Mockito.when(shopService.save(Mockito.any(Shop.class))).thenReturn(new Shop());
-        Mockito.when(productRepository.findByNameEquals(Mockito.anyString())).thenReturn(new Product());
-        Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(new Product());
-        Mockito.when(priceService.findByProductAndShopsAndDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class))).thenReturn(new Price());
-        Mockito.when(priceService.save(Mockito.any(Price.class))).thenReturn(new Price());
-
-        productService.uploadData(multipartFile);
-
-        Mockito.verify(categoryService, Mockito.times(2)).findByName(Mockito.anyString());
-        Mockito.verify(categoryService, Mockito.never()).save(Mockito.any(Category.class));
-        Mockito.verify(shopService, Mockito.times(2)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(shopService, Mockito.never()).save(Mockito.any(Shop.class));
-        Mockito.verify(productRepository, Mockito.times(2)).findByNameEquals(Mockito.anyString());
-        Mockito.verify(productRepository, Mockito.never()).save(Mockito.any(Product.class));
-        Mockito.verify(priceService, Mockito.times(2)).findByProductAndShopsAndDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class));
-        Mockito.verify(priceService, Mockito.never()).save(Mockito.any(Price.class));
-    }
-
-    @Test
-    public void uploadDataNewEntities() throws IOException {
-        MultipartFile multipartFile = new MockMultipartFile("test.csv", new FileInputStream(new File("src/test/resources/test.csv")));
-
-        Mockito.when(categoryService.findByName(Mockito.anyString())).thenReturn(null);
-        Mockito.when(categoryService.save(Mockito.any(Category.class))).thenReturn(new Category());
-        Mockito.when(shopService.findByNameAndAddress(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.save(Mockito.any(Shop.class))).thenReturn(new Shop());
-        Mockito.when(productRepository.findByNameEquals(Mockito.anyString())).thenReturn(null);
-        Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(new Product());
-        Mockito.when(priceService.findByProductAndShopsAndDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class))).thenReturn(null);
-        Mockito.when(priceService.save(Mockito.any(Price.class))).thenReturn(new Price());
-
-        productService.uploadData(multipartFile);
-
-        Mockito.verify(categoryService, Mockito.times(2)).findByName(Mockito.anyString());
-        Mockito.verify(categoryService, Mockito.times(2)).save(Mockito.any(Category.class));
-        Mockito.verify(shopService, Mockito.times(2)).findByNameAndAddress(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(shopService, Mockito.times(2)).save(Mockito.any(Shop.class));
-        Mockito.verify(productRepository, Mockito.times(2)).findByNameEquals(Mockito.anyString());
-        Mockito.verify(productRepository, Mockito.times(2)).save(Mockito.any(Product.class));
-        Mockito.verify(priceService, Mockito.times(2)).findByProductAndShopsAndDate(Mockito.any(Product.class), Mockito.any(Shop.class), Mockito.any(LocalDate.class));
-        Mockito.verify(priceService, Mockito.times(2)).save(Mockito.any(Price.class));
     }
 }

@@ -41,18 +41,18 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
     private CategoryService categoryService;
-    private ShopService shopService;
-    private PriceService priceService;
+//    private ShopService shopService;
+//    private PriceService priceService;
     private ModelMapper modelMapper;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService,
-                              ShopService shopService, PriceService priceService, ModelMapper modelMapper) {
+                              /*ShopService shopService*/ /*PriceService priceService*/ ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryService = categoryService;
-        this.priceService = priceService;
-        this.shopService = shopService;
+//        this.priceService = priceService;
+//        this.shopService = shopService;
     }
 
     public ProductServiceImpl() {
@@ -119,58 +119,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByNameEquals(name);
     }
 
-    @Override
-    public void uploadData(MultipartFile file) {
 
-        List<AllEntities> list = csvToEntities(file);
-
-        for (AllEntities allEntities : list) {
-            Category category = allEntities.getCategory();
-            Price price = allEntities.getPrice();
-            Product product = allEntities.getProduct();
-            Shop shop = allEntities.getShop();
-
-            Category categoryFromDb = categoryService.findByName(category.getName());
-            if (categoryFromDb == null) {
-                category = categoryService.save(category);
-                log.info(String.format("Create category %s", category.getName()));
-            } else {
-                category = categoryFromDb;
-            }
-
-            Shop shopFromDb = shopService.findByNameAndAddress(shop.getName(), shop.getAddress());
-            if (shopFromDb == null) {
-                shop = shopService.save(shop);
-                log.info(String.format("Create shop %s", shop.getName()));
-            } else {
-                shop = shopFromDb;
-            }
-
-            Product productFromDb = productRepository.findByNameEquals(product.getName());
-            if (productFromDb == null) {
-                product.setCategory(category);
-                Set<Shop> shops = new HashSet<>();
-                shops.add(shop);
-                product.setShops(shops);
-                product = productRepository.save(product);
-                log.info(String.format("Create product %s", product.getName()));
-            } else  {
-                product = productFromDb;
-            }
-
-            Price priceFromDb = priceService.findByProductAndShopsAndDate(product, shop, price.getDate());
-            if (priceFromDb == null) {
-                price.setProduct(product);
-                Set<Shop> shops = new HashSet<>();
-                shops.add(shop);
-                price.setShops(shops);
-                price = priceService.save(price);
-                log.info(String.format("Create price %s, %s", price.getDate(), price.getValue()));
-            } else {
-                price = priceFromDb;
-            }
-        }
-    }
 
     private Category getCategory(ProductDto productDto) {
         Category category = categoryService.findByName(productDto.getCategory().getName());
@@ -182,20 +131,7 @@ public class ProductServiceImpl implements ProductService {
         return category;
     }
 
-    private List<AllEntities> csvToEntities(MultipartFile file) {
-        List<AllEntities> list = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()))){
-            while (bufferedReader.ready()) {
-                String csvLine = bufferedReader.readLine();
-                String[] data = csvLine.split(";");
-                AllEntities entities = CsvLineToAllEntities.convert(data);
-                list.add(entities);
-            }
-        } catch (IOException e) {
-            throw new ReadFileException(String.format("File read error. File %s", file.getOriginalFilename()), e);
-        }
-        return list;
-    }
+
 
     private boolean isProductExists(ProductDto productDto) {
         return productRepository.findByNameEquals(productDto.getName()) != null;
