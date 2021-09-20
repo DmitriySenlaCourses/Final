@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "5e862f71-5280-442e-81d7-277080dfe25c",
+		"name": "kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getMessages",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/shops/kafka",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shops",
+						"kafka"
+					]
+				},
+				"description": "get messages from kafka topic"
+			},
+			"response": []
+		}
+	]
+}

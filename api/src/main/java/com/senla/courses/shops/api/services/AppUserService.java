@@ -11,4 +11,6 @@ public interface AppUserService {
     void create(AppUser appUser, String role);
 
     void update(AppUser appUser, String name);
+
+    void Listener(String message);
 }

@@ -3,5 +3,5 @@ group 'com.senla.courses.shops'
 version '1.0-SNAPSHOT'
 
 dependencies {
-    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
 }

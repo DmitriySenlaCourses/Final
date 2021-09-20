@@ -7,6 +7,8 @@ import com.senla.courses.shops.model.AppUser;
 import com.senla.courses.shops.model.UserRole;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,12 +29,15 @@ public class AppUserServiceImpl implements AppUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private AppUserRepository appUserRepository;
     private UserRoleRepository userRoleRepository;
+    private KafkaTemplate<Integer, String> kafkaTemplate;
 
     @Autowired
-    public AppUserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, AppUserRepository appUserRepository, UserRoleRepository userRoleRepository) {
+    public AppUserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, AppUserRepository appUserRepository, UserRoleRepository userRoleRepository,
+                              KafkaTemplate<Integer, String> kafkaTemplate) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.appUserRepository = appUserRepository;
         this.userRoleRepository = userRoleRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public AppUserServiceImpl() {
@@ -62,7 +67,8 @@ public class AppUserServiceImpl implements AppUserService {
         }
         appUser.setRoles(roles);
         appUserRepository.save(appUser);
-        log.info(String.format("Create user %s", appUser.getName()));
+
+        kafkaTemplate.send("myTopic", appUser.getName());
     }
 
     @Override
@@ -84,5 +90,11 @@ public class AppUserServiceImpl implements AppUserService {
         } catch (UsernameNotFoundException e) {
             return false;
         }
+    }
+
+    @KafkaListener(topics = "myTopic")
+    @Override
+    public void Listener(String message) {
+        log.info(String.format("Create user %s", message));
     }
 }

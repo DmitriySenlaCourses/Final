@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -27,6 +28,8 @@ public class AppUserServiceImplTest {
     private AppUserRepository appUserRepository;
     @Mock
     private UserRoleRepository userRoleRepository;
+    @Mock
+    private KafkaTemplate<Integer, String> kafkaTemplate;
 
     public AppUserServiceImplTest() {
         MockitoAnnotations.openMocks(this);
@@ -67,6 +70,7 @@ public class AppUserServiceImplTest {
         Mockito.when(bCryptPasswordEncoder.encode(Mockito.anyString())).thenReturn("password");
         Mockito.when(userRoleRepository.getOne(Mockito.anyLong())).thenReturn(userRole);
         Mockito.when(appUserRepository.save(appUser)).thenReturn(appUser);
+        Mockito.when(kafkaTemplate.send(Mockito.anyString(), Mockito.anyString())).thenReturn(Mockito.any());
 
         appUserService.create(appUser, "ROLE_USER");
 

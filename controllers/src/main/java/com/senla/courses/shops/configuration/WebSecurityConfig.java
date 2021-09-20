@@ -33,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.PUT, "/users").authenticated()
+                .antMatchers(HttpMethod.GET, "/kafka").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET,"/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")

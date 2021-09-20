@@ -1,0 +1,5 @@
+FROM mysql/mysql-server:8.0.26
+COPY docker/mysql/createDB.sql /docker-entrypoint-initdb.d/createDB.sql
+COPY docker/mysql/data.sql /docker-entrypoint-initdb.d/data.sql
+COPY docker/mysql/usr.sql /docker-entrypoint-initdb.d/usr.sql
+
