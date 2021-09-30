@@ -54,46 +54,69 @@ public class UploadServiceImpl implements UploadService {
             Product product = allEntities.getProduct();
             Shop shop = allEntities.getShop();
 
-            Category categoryFromDb = categoryService.findByName(category.getName());
-            if (categoryFromDb == null) {
-                category = categoryService.save(category);
-                log.info(String.format("Create category %s", category.getName()));
-            } else {
-                category = categoryFromDb;
-            }
-
-            Shop shopFromDb = shopService.findByNameAndAddress(shop.getName(), shop.getAddress());
-            if (shopFromDb == null) {
-                shop = shopService.save(shop);
-                log.info(String.format("Create shop %s", shop.getName()));
-            } else {
-                shop = shopFromDb;
-            }
-
-            Product productFromDb = productRepository.findByNameEquals(product.getName());
-            if (productFromDb == null) {
-                product.setCategory(category);
-                Set<Shop> shops = new HashSet<>();
-                shops.add(shop);
-                product.setShops(shops);
-                product = productRepository.save(product);
-                log.info(String.format("Create product %s", product.getName()));
-            } else  {
-                product = productFromDb;
-            }
-
-            Price priceFromDb = priceService.findByProductAndShopsAndDate(product, shop, price.getDate());
-            if (priceFromDb == null) {
-                price.setProduct(product);
-                Set<Shop> shops = new HashSet<>();
-                shops.add(shop);
-                price.setShops(shops);
-                price = priceService.save(price);
-                log.info(String.format("Create price %s, %s", price.getDate(), price.getValue()));
-            } else {
-                price = priceFromDb;
-            }
+            category = ifNotExistsSaveCategory(category);
+            shop = ifNotExistsSaveShop(shop);
+            product = ifNotExistsSaveProduct(product, category, shop);
+            price = ifNotExistsSavePrice(price, product, shop);
         }
+    }
+
+    private Category ifNotExistsSaveCategory(Category category) {
+        Category categoryFromDb = categoryService.findByName(category.getName());
+        Category returnedCategory;
+        if (categoryFromDb == null) {
+            returnedCategory = categoryService.save(category);
+            log.info(String.format("Create category %s", category.getName()));
+        } else {
+            returnedCategory = categoryFromDb;
+        }
+        return returnedCategory;
+    }
+
+    private Shop ifNotExistsSaveShop(Shop shop) {
+        Shop shopFromDb = shopService.findByNameAndAddress(shop.getName(), shop.getAddress());
+        Shop returnedShop;
+        if (shopFromDb == null) {
+            returnedShop = shopService.save(shop);
+            log.info(String.format("Create shop %s", shop.getName()));
+        } else {
+            returnedShop = shopFromDb;
+        }
+        return returnedShop;
+    }
+
+    private Product ifNotExistsSaveProduct(Product product, Category category, Shop shop) {
+        Product productFromDb = productRepository.findByNameEquals(product.getName());
+        Product returnedProduct;
+        if (productFromDb == null) {
+            product.setCategory(category);
+            Set<Shop> shops = new HashSet<>();
+            shops.add(shop);
+            product.setShops(shops);
+            returnedProduct = productRepository.save(product);
+            log.info(String.format("Create product %s", product.getName()));
+        } else  {
+            Set<Shop> shops = productFromDb.getShops();
+            shops.add(shop);
+            returnedProduct = productRepository.save(productFromDb);
+        }
+        return returnedProduct;
+    }
+
+    private Price ifNotExistsSavePrice(Price price, Product product, Shop shop) {
+        Price priceFromDb = priceService.findByProductAndShopsAndDate(product, shop, price.getDate());
+        Price returnedPrice;
+        if (priceFromDb == null) {
+            price.setProduct(product);
+            Set<Shop> shops = new HashSet<>();
+            shops.add(shop);
+            price.setShops(shops);
+            returnedPrice = priceService.save(price);
+            log.info(String.format("Create price %s, %s", price.getDate(), price.getValue()));
+        } else {
+            returnedPrice = priceFromDb;
+        }
+        return returnedPrice;
     }
 
     private List<AllEntities> csvToEntities(MultipartFile file) {
