@@ -60,12 +60,12 @@ public class ProductController {
         return ResponseEntity.ok(returnedProductDto);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @ApiOperation(value = "Update product")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Product was updated successfully"),
             @ApiResponse(code = 400, message = "Product already exists")})
-    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
-        ProductDto returnedProductDto = productService.update(productDto);
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        ProductDto returnedProductDto = productService.update(id, productDto);
         return ResponseEntity.ok(returnedProductDto);
     }
 

@@ -115,7 +115,7 @@ public class ProductServiceImplTest {
     public void update() {
         ProductDto productDto = new ProductDto();
         productDto.setName("Milk");
-        productDto.setId(1L);
+        Long id = 1L;
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setName("Fish");
         productDto.setCategory(categoryDto);
@@ -127,7 +127,7 @@ public class ProductServiceImplTest {
         Mockito.when(productRepository.save(product)).thenReturn(product);
         Mockito.when(modelMapper.map(product, ProductDto.class)).thenReturn(productDto);
 
-        productService.update(productDto);
+        productService.update(1L, productDto);
 
         Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(Mockito.anyString());
         Mockito.verify(productRepository, Mockito.times(1)).getOne(Mockito.anyLong());
@@ -139,7 +139,7 @@ public class ProductServiceImplTest {
     public void updateException() {
         ProductDto productDto = new ProductDto();
         productDto.setName("Milk");
-        productDto.setId(1L);
+        Long id = 1L;
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setName("Fish");
         productDto.setCategory(categoryDto);
@@ -151,7 +151,7 @@ public class ProductServiceImplTest {
         Mockito.when(productRepository.save(product)).thenReturn(product);
         Mockito.when(modelMapper.map(product, ProductDto.class)).thenReturn(productDto);
 
-        productService.update(productDto);
+        productService.update(id, productDto);
 
         Mockito.verify(productRepository, Mockito.times(1)).findByNameEquals(Mockito.anyString());
         Mockito.verify(productRepository, Mockito.never()).getOne(Mockito.anyLong());

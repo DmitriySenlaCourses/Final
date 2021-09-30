@@ -1,6 +1,7 @@
 package com.senla.courses.shops.api.services;
 
 import com.senla.courses.shops.model.AppUser;
+import com.senla.courses.shops.model.dto.AppUserDto;
 
 /**
  * Service interface for {@link AppUser}
@@ -8,9 +9,9 @@ import com.senla.courses.shops.model.AppUser;
 public interface AppUserService {
     AppUser getByName(String name);
 
-    void create(AppUser appUser, String role);
+    void create(AppUserDto appUserDto, String role);
 
-    void update(AppUser appUser, String name);
+    void update(AppUserDto appUserDto, String name);
 
     void Listener(String message);
 }

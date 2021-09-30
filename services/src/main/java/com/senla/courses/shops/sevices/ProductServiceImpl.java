@@ -72,11 +72,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto update(ProductDto productDto) {
+    public ProductDto update(Long id, ProductDto productDto) {
         if (isProductExists(productDto)) {
             throw new EntityExistsException(String.format("Product %s already exists", productDto.getName()));
         }
-        Product one = productRepository.getOne(productDto.getId());
+        Product one = productRepository.getOne(id);
         one.setName(productDto.getName());
         one.setUnit(productDto.getUnit());
         Category category = getCategory(productDto);

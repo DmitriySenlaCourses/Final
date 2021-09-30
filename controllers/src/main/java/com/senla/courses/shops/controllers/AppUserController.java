@@ -2,6 +2,7 @@ package com.senla.courses.shops.controllers;
 
 import com.senla.courses.shops.api.services.AppUserService;
 import com.senla.courses.shops.model.AppUser;
+import com.senla.courses.shops.model.dto.AppUserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -44,13 +45,13 @@ public class AppUserController {
     @ApiResponses(value = {@ApiResponse(code = 204, message = "User was created successfully"),
             @ApiResponse(code = 400, message = "User already exists")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> create(@RequestBody AppUser appUser, Authentication authentication) {
+    public ResponseEntity<Void> create(@RequestBody AppUserDto appUserDto, Authentication authentication) {
         String role = null;
         if (authentication != null) {
             GrantedAuthority authority = authentication.getAuthorities().stream().findFirst().orElseGet(null);
             role = authority == null ? null : authority.getAuthority();
         }
-        appUserService.create(appUser, role);
+        appUserService.create(appUserDto, role);
         return ResponseEntity.noContent().build();
     }
 
@@ -59,8 +60,8 @@ public class AppUserController {
     @ApiResponses(value = {@ApiResponse(code = 204, message = "User was updated successfully"),
             @ApiResponse(code = 400, message = "User already exists")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> update(@RequestBody AppUser appUser, Authentication authentication) {
-        appUserService.update(appUser, authentication.getName());
+    public ResponseEntity<Void> update(@RequestBody AppUserDto appUserDto, Authentication authentication) {
+        appUserService.update(appUserDto, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 

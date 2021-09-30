@@ -5,7 +5,9 @@ import com.senla.courses.shops.dao.AppUserRepository;
 import com.senla.courses.shops.dao.UserRoleRepository;
 import com.senla.courses.shops.model.AppUser;
 import com.senla.courses.shops.model.UserRole;
+import com.senla.courses.shops.model.dto.AppUserDto;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -29,14 +31,16 @@ public class AppUserServiceImpl implements AppUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private AppUserRepository appUserRepository;
     private UserRoleRepository userRoleRepository;
+    private ModelMapper modelMapper;
     private KafkaTemplate<Integer, String> kafkaTemplate;
 
     @Autowired
     public AppUserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, AppUserRepository appUserRepository, UserRoleRepository userRoleRepository,
-                              KafkaTemplate<Integer, String> kafkaTemplate) {
+                              ModelMapper modelMapper, KafkaTemplate<Integer, String> kafkaTemplate) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.appUserRepository = appUserRepository;
         this.userRoleRepository = userRoleRepository;
+        this.modelMapper = modelMapper;
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -53,11 +57,12 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void create(AppUser appUser, String role) {
-        if (isUserExists(appUser)) {
-            throw new EntityExistsException(String.format("User %s already exists", appUser.getName()));
+    public void create(AppUserDto appUserDto, String role) {
+        if (isUserExists(appUserDto)) {
+            throw new EntityExistsException(String.format("User %s already exists", appUserDto.getName()));
         }
 
+        AppUser appUser = modelMapper.map(appUserDto, AppUser.class);
         appUser.setPassword(bCryptPasswordEncoder.encode(appUser.getPassword()));
         Set<UserRole> roles = new HashSet<>();
         if ("ROLE_ADMIN".equals(role)) {
@@ -72,20 +77,22 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void update(AppUser appUser, String name) {
-        if (isUserExists(appUser)) {
-            throw new EntityExistsException(String.format("User %s already exists", appUser.getName()));
+    public void update(AppUserDto appUserDto, String updatedName) {
+        if (isUserExists(appUserDto)) {
+            throw new EntityExistsException(String.format("User %s already exists", appUserDto.getName()));
         }
-        AppUser user = getByName(name);
-        user.setName(appUser.getName());
-        user.setPassword(bCryptPasswordEncoder.encode(appUser.getPassword()));
-        appUserRepository.save(user);
-        log.info(String.format("Update user %s", user.getName()));
+
+
+        AppUser updatedUser = getByName(updatedName);
+        updatedUser.setName(appUserDto.getName());
+        updatedUser.setPassword(bCryptPasswordEncoder.encode(appUserDto.getPassword()));
+        appUserRepository.save(updatedUser);
+        log.info(String.format("Update user %s", updatedUser.getName()));
     }
 
-    private boolean isUserExists(AppUser appUser) {
+    private boolean isUserExists(AppUserDto appUserDto) {
         try {
-            getByName(appUser.getName());
+            getByName(appUserDto.getName());
             return true;
         } catch (UsernameNotFoundException e) {
             return false;
