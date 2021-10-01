@@ -16,7 +16,7 @@ public interface ProductService {
 
     void delete(long id);
 
-    List<ProductDto> findByCategoryAndName(String categoryName, String productName);
+    List<ProductDto> findByCategoryAndName(String categoryName, String productName, Integer pageNo, Integer pageSize, String sortBy);
 
     Product findByName(String name);
 

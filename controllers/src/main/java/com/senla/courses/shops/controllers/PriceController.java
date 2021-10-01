@@ -42,8 +42,11 @@ public class PriceController {
                                                                        @RequestParam(name = "shop") String shopName,
                                                                        @RequestParam(name = "address") String shopAddress,
                                                                        @RequestParam(name = "start", required = false) @ApiParam(example = "2021-10-25") String startDate,
-                                                                       @RequestParam(name = "end", required = false) @ApiParam(example = "2021-10-25") String endDate) {
-        Map<LocalDate, BigDecimal> dynamics = priceService.getDynamics(productName, shopName, shopAddress, startDate, endDate);
+                                                                       @RequestParam(name = "end", required = false) @ApiParam(example = "2021-10-25") String endDate,
+                                                                       @RequestParam(defaultValue = "0") Integer pageNo,
+                                                                       @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                       @RequestParam(defaultValue = "date") String sortBy) {
+        Map<LocalDate, BigDecimal> dynamics = priceService.getDynamics(productName, shopName, shopAddress, startDate, endDate, pageNo, pageSize, sortBy);
         return ResponseEntity.ok(dynamics);
     }
 
@@ -51,8 +54,11 @@ public class PriceController {
     @ApiOperation(value = "Comparing of product prices for all shops")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Comparing was received successfully"),
             @ApiResponse(code = 400, message = "Product not found")})
-    public ResponseEntity<List<PriceShop>> getLastPrices(@RequestParam(name = "product") String productName) {
-        List<PriceShop> lastPrices = priceService.getLastPrices(productName);
+    public ResponseEntity<List<PriceShop>> getLastPrices(@RequestParam(name = "product") String productName,
+                                                         @RequestParam(defaultValue = "0") Integer pageNo,
+                                                         @RequestParam(defaultValue = "10") Integer pageSize,
+                                                         @RequestParam(defaultValue = "date") String sortBy) {
+        List<PriceShop> lastPrices = priceService.getLastPrices(productName, pageNo, pageSize, sortBy);
         return ResponseEntity.ok(lastPrices);
     }
 }

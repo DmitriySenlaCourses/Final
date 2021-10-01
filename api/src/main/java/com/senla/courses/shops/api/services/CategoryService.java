@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface CategoryService {
 
-    List<CategoryDto> getAll();
+    List<CategoryDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
 
     Category findByName(String name);
 

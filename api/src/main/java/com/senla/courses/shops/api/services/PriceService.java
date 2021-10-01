@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public interface PriceService {
 
-    Map<LocalDate, BigDecimal> getDynamics(String productName, String shopName, String shopAddress, String start, String end);
+    Map<LocalDate, BigDecimal> getDynamics(String productName, String shopName, String shopAddress, String start, String end, Integer pageNo, Integer pageSize, String sortBy);
 
-    List<PriceShop> getLastPrices(String productName);
+    List<PriceShop> getLastPrices(String productName, Integer pageNo, Integer pageSize, String sortBy);
 
     Price findByProductAndShopsAndDate(Product product, Shop shop, LocalDate date);
 

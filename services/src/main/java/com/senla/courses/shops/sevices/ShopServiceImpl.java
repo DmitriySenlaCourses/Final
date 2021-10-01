@@ -7,10 +7,15 @@ import com.senla.courses.shops.model.dto.ShopDto;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,9 +51,15 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public List<ShopDto> getAll() {
-        List<Shop> all = shopRepository.findAll();
-        return all.stream().map(shop -> modelMapper.map(shop, ShopDto.class)).collect(Collectors.toList());
+    public List<ShopDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        if (shopPage.hasContent()) {
+            return shopPage.stream().map(shop -> modelMapper.map(shop, ShopDto.class)).collect(Collectors.toList());
+        } else {
+            return new ArrayList<ShopDto>();
+        }
     }
 
     @Override

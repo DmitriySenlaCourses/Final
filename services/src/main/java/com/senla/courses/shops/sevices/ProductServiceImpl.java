@@ -16,6 +16,9 @@ import com.senla.courses.shops.sevices.util.CsvLineToAllEntities;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findByCategoryAndName(String categoryName, String productName) {
+    public List<ProductDto> findByCategoryAndName(String categoryName, String productName, Integer pageNo, Integer pageSize, String sortBy) {
         Category foundCategory = categoryService.findByName(categoryName);
         List<Product> list = null;
 
@@ -105,10 +108,12 @@ public class ProductServiceImpl implements ProductService {
             throw new EntityNotFoundException(String.format("%s category not found", categoryName));
         }
 
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
         if (productName == null) {
-            list = productRepository.findByCategory(foundCategory);
+            list = productRepository.findByCategory(foundCategory, pageable);
         } else {
-            list = productRepository.findByCategoryAndNameContaining(foundCategory, productName);
+            list = productRepository.findByCategoryAndNameContaining(foundCategory, productName, pageable);
         }
 
         return list.stream().map(product -> modelMapper.map(product, ProductDto.class)).collect(Collectors.toList());

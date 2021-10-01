@@ -9,11 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,8 +31,10 @@ public class ShopController {
     @GetMapping
     @ApiOperation(value = "Get all shops")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "All shops successfully received")})
-    public ResponseEntity<List<ShopDto>> getAll() {
-        List<ShopDto> list = shopService.getAll();
+    public ResponseEntity<List<ShopDto>> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                @RequestParam(defaultValue = "10") Integer pageSize,
+                                                @RequestParam(defaultValue = "id") String sortBy) {
+        List<ShopDto> list = shopService.getAll(pageNo, pageSize, sortBy);
         return ResponseEntity.ok(list);
     }
 

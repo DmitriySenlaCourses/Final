@@ -5,13 +5,14 @@ import com.senla.courses.shops.api.services.PriceShop;
 import com.senla.courses.shops.api.services.ProductService;
 import com.senla.courses.shops.api.services.ShopService;
 import com.senla.courses.shops.dao.PriceRepository;
-import com.senla.courses.shops.dao.ProductRepository;
-import com.senla.courses.shops.dao.ShopRepository;
 import com.senla.courses.shops.model.Price;
 import com.senla.courses.shops.model.Product;
 import com.senla.courses.shops.model.Shop;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +49,7 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public Map<LocalDate, BigDecimal> getDynamics(String productName, String shopName, String shopAddress, String start, String end) {
+    public Map<LocalDate, BigDecimal> getDynamics(String productName, String shopName, String shopAddress, String start, String end, Integer pageNo, Integer pageSize, String sortBy) {
         Map<LocalDate, BigDecimal> map = new LinkedHashMap<>();
         Product product = productService.findByName(productName);
         Shop shop = shopService.findByNameAndAddress(shopName, shopAddress);
@@ -63,7 +64,9 @@ public class PriceServiceImpl implements PriceService {
         startDate = start == null ? LocalDate.MIN : convertDate(start);
         endDate = end == null ? LocalDate.now() : convertDate(end);
 
-        List<Price> prices = priceRepository.findByProductAndShopsAndDateBetweenOrderByDate(product, shop, startDate, endDate);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        List<Price> prices = priceRepository.findByProductAndShopsAndDateBetween(product, shop, startDate, endDate, pageable);
         for (Price price : prices) {
             map.put(price.getDate(), price.getValue());
         }
@@ -71,12 +74,13 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public List<PriceShop> getLastPrices(String productName) {
+    public List<PriceShop> getLastPrices(String productName, Integer pageNo, Integer pageSize, String sortBy) {
         Product product = productService.findByName(productName);
         if (product == null) {
             throw new EntityNotFoundException(String.format("Product %s not found", productName));
         }
-        List<PriceShop> lastPrices = priceRepository.getLastPrices(product.getId());
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        List<PriceShop> lastPrices = priceRepository.getLastPrices(product.getId(), pageable);
         return lastPrices;
     }
 

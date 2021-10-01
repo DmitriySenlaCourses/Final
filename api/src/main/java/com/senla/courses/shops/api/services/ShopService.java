@@ -11,7 +11,7 @@ import java.util.List;
 public interface ShopService {
     ShopDto create(ShopDto shopDto);
 
-    List<ShopDto> getAll();
+    List<ShopDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
 
     Shop findByNameAndAddress(String name, String address);
 

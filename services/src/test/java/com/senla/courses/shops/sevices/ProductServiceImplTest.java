@@ -21,6 +21,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -174,6 +177,10 @@ public class ProductServiceImplTest {
 
     @Test
     public void findByCategoryAndName() {
+        Integer pageNo = 0;
+        Integer pageSize = 2;
+        String sortBy = "id";
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         String categoryName = "Fish";
         String productName = "Milk";
         Category category = new Category();
@@ -182,15 +189,15 @@ public class ProductServiceImplTest {
         list.add(new Product());
 
         Mockito.when(categoryService.findByName(categoryName)).thenReturn(category);
-        Mockito.when(productRepository.findByCategory(category)).thenReturn(list);
-        Mockito.when(productRepository.findByCategoryAndNameContaining(category, productName)).thenReturn(list);
+        Mockito.when(productRepository.findByCategory(category, pageable)).thenReturn(list);
+        Mockito.when(productRepository.findByCategoryAndNameContaining(category, productName, pageable)).thenReturn(list);
         Mockito.when(modelMapper.map(Mockito.any(Product.class), Mockito.eq(ProductDto.class))).thenReturn(new ProductDto());
 
-        List<ProductDto> returnedList = productService.findByCategoryAndName(categoryName, productName);
+        List<ProductDto> returnedList = productService.findByCategoryAndName(categoryName, productName, pageNo, pageSize, sortBy);
 
         Mockito.verify(categoryService, Mockito.times(1)).findByName(categoryName);
-        Mockito.verify(productRepository, Mockito.never()).findByCategory(category);
-        Mockito.verify(productRepository, Mockito.times(1)).findByCategoryAndNameContaining(category, productName);
+        Mockito.verify(productRepository, Mockito.never()).findByCategory(category, pageable);
+        Mockito.verify(productRepository, Mockito.times(1)).findByCategoryAndNameContaining(category, productName, pageable);
         Mockito.verify(modelMapper, Mockito.times(2)).map(Mockito.any(Product.class), Mockito.eq(ProductDto.class));
         Assert.assertEquals(list.size(), returnedList.size());
 
@@ -198,6 +205,10 @@ public class ProductServiceImplTest {
 
     @Test(expected = EntityNotFoundException.class)
     public void findByCategoryAndNameException() {
+        Integer pageNo = 0;
+        Integer pageSize = 2;
+        String sortBy = "id";
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         String categoryName = "Fish";
         String productName = "Milk";
         Category category = new Category();
@@ -206,15 +217,15 @@ public class ProductServiceImplTest {
         list.add(new Product());
 
         Mockito.when(categoryService.findByName(categoryName)).thenReturn(null);
-        Mockito.when(productRepository.findByCategory(category)).thenReturn(list);
-        Mockito.when(productRepository.findByCategoryAndNameContaining(category, productName)).thenReturn(list);
+        Mockito.when(productRepository.findByCategory(category, pageable)).thenReturn(list);
+        Mockito.when(productRepository.findByCategoryAndNameContaining(category, productName, pageable)).thenReturn(list);
         Mockito.when(modelMapper.map(Mockito.any(Product.class), Mockito.eq(ProductDto.class))).thenReturn(new ProductDto());
 
-        List<ProductDto> returnedList = productService.findByCategoryAndName(categoryName, productName);
+        List<ProductDto> returnedList = productService.findByCategoryAndName(categoryName, productName, pageNo, pageSize, sortBy);
 
         Mockito.verify(categoryService, Mockito.times(1)).findByName(categoryName);
-        Mockito.verify(productRepository, Mockito.never()).findByCategory(category);
-        Mockito.verify(productRepository, Mockito.times(1)).findByCategoryAndNameContaining(category, productName);
+        Mockito.verify(productRepository, Mockito.never()).findByCategory(category, pageable);
+        Mockito.verify(productRepository, Mockito.times(1)).findByCategoryAndNameContaining(category, productName, pageable);
         Mockito.verify(modelMapper, Mockito.times(2)).map(Mockito.any(Product.class), Mockito.eq(ProductDto.class));
         Assert.assertEquals(list.size(), returnedList.size());
     }

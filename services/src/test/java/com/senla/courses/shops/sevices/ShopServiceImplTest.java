@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
@@ -71,16 +73,19 @@ public class ShopServiceImplTest {
 
     @Test
     public void getAll() {
+        Integer pageNo = 0;
+        Integer pageSize = 2;
+        String sortBy = "id";
         List<Shop> all = new ArrayList<>();
         all.add(new Shop());
         all.add(new Shop());
 
-        Mockito.when(shopRepository.findAll()).thenReturn(all);
+        Mockito.when(shopRepository.findAll(Mockito.any(PageRequest.class))).thenReturn(new PageImpl<>(all));
         Mockito.when(modelMapper.map(Mockito.any(Shop.class), Mockito.eq(ShopDto.class))).thenReturn(new ShopDto());
 
-        List<ShopDto> allDto = shopService.getAll();
+        List<ShopDto> allDto = shopService.getAll(pageNo, pageSize, sortBy);
 
-        Mockito.verify(shopRepository, Mockito.times(1)).findAll();
+        Mockito.verify(shopRepository, Mockito.times(1)).findAll(Mockito.any(PageRequest.class));
         Mockito.verify(modelMapper, Mockito.times(all.size())).map(Mockito.any(Shop.class), Mockito.eq(ShopDto.class));
         Assert.assertEquals(all.size(), allDto.size());
     }

@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,8 +32,10 @@ public class CategoryController {
     @ApiOperation(value = "Get all categories")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "All categories successfully received")})
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAll() {
-        List<CategoryDto> list = categoryService.getAll();
+    public ResponseEntity<List<CategoryDto>> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                    @RequestParam(defaultValue = "10") Integer pageSize,
+                                                    @RequestParam(defaultValue = "id") String sortBy) {
+        List<CategoryDto> list = categoryService.getAll(pageNo, pageSize, sortBy);
 
         return ResponseEntity.ok(list);
     }

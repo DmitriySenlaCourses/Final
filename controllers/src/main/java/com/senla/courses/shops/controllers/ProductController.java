@@ -45,8 +45,11 @@ public class ProductController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "List of product was received successfully"),
             @ApiResponse(code = 400, message = "Category not found")})
     public ResponseEntity<List<ProductDto>> findByCategory(@RequestParam(name = "category") String categoryName,
-                                                           @RequestParam(name = "name", required = false) String productName) {
-        List<ProductDto> list = productService.findByCategoryAndName(categoryName, productName);
+                                                           @RequestParam(name = "name", required = false) String productName,
+                                                           @RequestParam(defaultValue = "0") Integer pageNo,
+                                                           @RequestParam(defaultValue = "10") Integer pageSize,
+                                                           @RequestParam(defaultValue = "id") String sortBy) {
+        List<ProductDto> list = productService.findByCategoryAndName(categoryName, productName, pageNo, pageSize,sortBy);
 
         return ResponseEntity.ok(list);
     }
