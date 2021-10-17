@@ -13,5 +13,7 @@ public interface AppUserService {
 
     void update(AppUserDto appUserDto, String name);
 
+    String login(AppUserDto appUserDto);
+
     void Listener(String message);
 }

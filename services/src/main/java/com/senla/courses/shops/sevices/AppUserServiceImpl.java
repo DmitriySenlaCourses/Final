@@ -6,11 +6,14 @@ import com.senla.courses.shops.dao.UserRoleRepository;
 import com.senla.courses.shops.model.AppUser;
 import com.senla.courses.shops.model.UserRole;
 import com.senla.courses.shops.model.dto.AppUserDto;
+import com.senla.courses.shops.sevices.token.TokenProvider;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,15 +35,20 @@ public class AppUserServiceImpl implements AppUserService {
     private AppUserRepository appUserRepository;
     private UserRoleRepository userRoleRepository;
     private ModelMapper modelMapper;
+    private TokenProvider tokenProvider;
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
     private KafkaTemplate<Integer, String> kafkaTemplate;
 
     @Autowired
     public AppUserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, AppUserRepository appUserRepository, UserRoleRepository userRoleRepository,
-                              ModelMapper modelMapper, KafkaTemplate<Integer, String> kafkaTemplate) {
+                              ModelMapper modelMapper, TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder,
+                              KafkaTemplate<Integer, String> kafkaTemplate) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.appUserRepository = appUserRepository;
         this.userRoleRepository = userRoleRepository;
         this.modelMapper = modelMapper;
+        this.tokenProvider = tokenProvider;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -88,6 +96,15 @@ public class AppUserServiceImpl implements AppUserService {
         updatedUser.setPassword(bCryptPasswordEncoder.encode(appUserDto.getPassword()));
         appUserRepository.save(updatedUser);
         log.info(String.format("Update user %s", updatedUser.getName()));
+    }
+
+    @Override
+    public String login(AppUserDto appUserDto) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(appUserDto.getName(), appUserDto.getPassword());
+        authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        AppUser appUser = appUserRepository.findByName(appUserDto.getName());
+        String token = tokenProvider.createToken(appUser.getName(), appUser.getRoles().iterator().next().getName());
+        return token;
     }
 
     private boolean isUserExists(AppUserDto appUserDto) {

@@ -65,6 +65,13 @@ public class AppUserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody AppUserDto appUserDto) {
+
+        String token = appUserService.login(appUserDto);
+        return ResponseEntity.ok(token);
+    }
+
     @GetMapping("/logout")
     @ApiOperation(value = "Logout user")
     @ApiResponses(value = {@ApiResponse(code = 204, message = "Successful logout")})
