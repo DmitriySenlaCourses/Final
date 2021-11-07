@@ -30,6 +30,8 @@ public class ShopServiceImpl implements ShopService {
     private ShopRepository shopRepository;
     private ModelMapper modelMapper;
 
+    private Integer MAX_VALUE = 5;
+
     @Autowired
     public ShopServiceImpl(ShopRepository shopRepository, ModelMapper modelMapper) {
         this.shopRepository = shopRepository;
@@ -52,13 +54,16 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public List<ShopDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+        if (pageSize > MAX_VALUE) {
+            pageSize = MAX_VALUE;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         Page<Shop> shopPage = shopRepository.findAll(pageable);
         if (shopPage.hasContent()) {
             return shopPage.stream().map(shop -> modelMapper.map(shop, ShopDto.class)).collect(Collectors.toList());
         } else {
-            return new ArrayList<ShopDto>();
+            return new ArrayList<>();
         }
     }
 

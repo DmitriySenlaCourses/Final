@@ -8,7 +8,6 @@ import com.senla.courses.shops.dao.PriceRepository;
 import com.senla.courses.shops.model.Price;
 import com.senla.courses.shops.model.Product;
 import com.senla.courses.shops.model.Shop;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,15 +33,15 @@ public class PriceServiceImpl implements PriceService {
     private PriceRepository priceRepository;
     private ProductService productService;
     private ShopService shopService;
-    private ModelMapper modelMapper;
+
+    private Integer MAX_VALUE = 5;
 
     @Autowired
-    public PriceServiceImpl(PriceRepository priceRepository, ModelMapper modelMapper,
+    public PriceServiceImpl(PriceRepository priceRepository,
                             ProductService productService, ShopService shopService) {
         this.priceRepository = priceRepository;
         this.productService = productService;
         this.shopService = shopService;
-        this.modelMapper = modelMapper;
     }
 
     public PriceServiceImpl() {
@@ -64,6 +63,9 @@ public class PriceServiceImpl implements PriceService {
         startDate = start == null ? LocalDate.MIN : convertDate(start);
         endDate = end == null ? LocalDate.now() : convertDate(end);
 
+        if (pageSize > MAX_VALUE) {
+            pageSize = MAX_VALUE;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         List<Price> prices = priceRepository.findByProductAndShopsAndDateBetween(product, shop, startDate, endDate, pageable);
@@ -79,9 +81,12 @@ public class PriceServiceImpl implements PriceService {
         if (product == null) {
             throw new EntityNotFoundException(String.format("Product %s not found", productName));
         }
+
+        if (pageSize > MAX_VALUE) {
+            pageSize = MAX_VALUE;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        List<PriceShop> lastPrices = priceRepository.getLastPrices(product.getId(), pageable);
-        return lastPrices;
+        return priceRepository.getLastPrices(product.getId(), pageable);
     }
 
     @Override

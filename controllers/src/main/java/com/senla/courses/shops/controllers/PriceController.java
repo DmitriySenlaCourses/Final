@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/prices")
-@Api(tags = {"Price controller"}, description = "Some operations on the price")
+@Api(tags = {"Price controller. Some operations on the price"})
 public class PriceController {
     private PriceService priceService;
 

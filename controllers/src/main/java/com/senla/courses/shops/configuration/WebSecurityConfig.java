@@ -20,6 +20,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenFilter tokenFilter;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private static final String ADMIN_ROLE = "ADMIN";
+    private static final String USER_ROLE = "USER";
 
     @Autowired
     public WebSecurityConfig(TokenFilter tokenFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
@@ -42,15 +44,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui",
+                        "/swagger-resources", "/swagger-resources/configuration/security",
+                        "/swagger-ui.html", "/webjars/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .antMatchers(HttpMethod.PUT, "/users").authenticated()
-                .antMatchers(HttpMethod.GET, "/kafka").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/**").hasAnyRole("ADMIN", "USER")
-                .antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/kafka").hasRole(ADMIN_ROLE)
+                .antMatchers(HttpMethod.GET,"/**").hasAnyRole(ADMIN_ROLE, USER_ROLE)
+                .antMatchers(HttpMethod.POST,"/**").hasRole(ADMIN_ROLE)
+                .antMatchers(HttpMethod.PUT,"/**").hasRole(ADMIN_ROLE)
+                .antMatchers(HttpMethod.DELETE, "/**").hasRole(ADMIN_ROLE)
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

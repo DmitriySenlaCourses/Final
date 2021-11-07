@@ -27,6 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     private ModelMapper modelMapper;
 
+    private Integer MAX_VALUE = 5;
+
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
@@ -38,14 +40,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+        if (pageSize > MAX_VALUE) {
+            pageSize = MAX_VALUE;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         if (categoryPage.hasContent()) {
             return categoryPage.getContent().stream().map(category -> modelMapper.map(category, CategoryDto.class)).collect(Collectors.toList());
         } else {
-            return new ArrayList<CategoryDto>();
+            return new ArrayList<>();
         }
-//        return all.stream().map(category -> modelMapper.map(category, CategoryDto.class)).collect(Collectors.toList());
     }
 
     @Override

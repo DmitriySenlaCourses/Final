@@ -2,7 +2,6 @@ package com.senla.courses.shops.api.services;
 
 import com.senla.courses.shops.model.Product;
 import com.senla.courses.shops.model.dto.ProductDto;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

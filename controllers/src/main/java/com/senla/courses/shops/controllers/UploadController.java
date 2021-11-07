@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/upload")
-@Api(tags = {"Upload controller"}, description = "Upload data from file")
+@Api(tags = {"Upload controller. Upload data from file"})
 public class UploadController {
 
     private UploadService uploadService;

@@ -33,7 +33,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
         MultipartConfigElement multipartConfigElement =
                 new MultipartConfigElement(uploadDirectory.getAbsolutePath(),
-                        maxSize, maxSize * 2, maxSize / 2);
+                        maxSize, maxSize * 2L, maxSize / 2);
 
         registration.setMultipartConfig(multipartConfigElement);
     }

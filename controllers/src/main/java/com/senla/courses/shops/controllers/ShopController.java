@@ -18,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/shops")
-@Api(tags = {"Shop controller"}, description = "Some operations on the shop")
+@Api(tags = {"Shop controller. Some operations on the shop"})
 public class ShopController {
 
     private ShopService shopService;

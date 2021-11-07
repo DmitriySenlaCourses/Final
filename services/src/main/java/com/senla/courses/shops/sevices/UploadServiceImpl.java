@@ -57,7 +57,7 @@ public class UploadServiceImpl implements UploadService {
             category = ifNotExistsSaveCategory(category);
             shop = ifNotExistsSaveShop(shop);
             product = ifNotExistsSaveProduct(product, category, shop);
-            price = ifNotExistsSavePrice(price, product, shop);
+            ifNotExistsSavePrice(price, product, shop);
         }
     }
 

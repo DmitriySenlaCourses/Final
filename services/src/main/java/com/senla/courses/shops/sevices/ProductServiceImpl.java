@@ -1,18 +1,11 @@
 package com.senla.courses.shops.sevices;
 
 import com.senla.courses.shops.api.services.CategoryService;
-import com.senla.courses.shops.api.services.PriceService;
 import com.senla.courses.shops.api.services.ProductService;
-import com.senla.courses.shops.api.services.ShopService;
 import com.senla.courses.shops.dao.ProductRepository;
-import com.senla.courses.shops.model.AllEntities;
 import com.senla.courses.shops.model.Category;
-import com.senla.courses.shops.model.Price;
 import com.senla.courses.shops.model.Product;
-import com.senla.courses.shops.model.Shop;
 import com.senla.courses.shops.model.dto.ProductDto;
-import com.senla.courses.shops.sevices.exceptions.ReadFileException;
-import com.senla.courses.shops.sevices.util.CsvLineToAllEntities;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,18 +30,16 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
     private CategoryService categoryService;
-//    private ShopService shopService;
-//    private PriceService priceService;
     private ModelMapper modelMapper;
+
+    private Integer MAX_VALUE = 5;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService,
-                              /*ShopService shopService*/ /*PriceService priceService*/ ModelMapper modelMapper) {
+                              ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryService = categoryService;
-//        this.priceService = priceService;
-//        this.shopService = shopService;
     }
 
     public ProductServiceImpl() {
@@ -108,6 +92,9 @@ public class ProductServiceImpl implements ProductService {
             throw new EntityNotFoundException(String.format("%s category not found", categoryName));
         }
 
+        if (pageSize > MAX_VALUE) {
+            pageSize = MAX_VALUE;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         if (productName == null) {

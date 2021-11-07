@@ -103,8 +103,7 @@ public class AppUserServiceImpl implements AppUserService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(appUserDto.getName(), appUserDto.getPassword());
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         AppUser appUser = appUserRepository.findByName(appUserDto.getName());
-        String token = tokenProvider.createToken(appUser.getName(), appUser.getRoles().iterator().next().getName());
-        return token;
+        return tokenProvider.createToken(appUser.getName(), appUser.getRoles().iterator().next().getName());
     }
 
     private boolean isUserExists(AppUserDto appUserDto) {
@@ -118,7 +117,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @KafkaListener(topics = "myTopic")
     @Override
-    public void Listener(String message) {
+    public void listener(String message) {
         log.info(String.format("Create user %s", message));
     }
 }

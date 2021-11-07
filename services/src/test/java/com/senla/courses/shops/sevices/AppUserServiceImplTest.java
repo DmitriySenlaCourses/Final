@@ -6,13 +6,16 @@ import com.senla.courses.shops.dao.UserRoleRepository;
 import com.senla.courses.shops.model.AppUser;
 import com.senla.courses.shops.model.UserRole;
 import com.senla.courses.shops.model.dto.AppUserDto;
+import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import static org.hamcrest.CoreMatchers.is;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -52,13 +55,18 @@ public class AppUserServiceImplTest {
 
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test
     public void getByNameException() {
         AppUser appUser = null;
         String name = "user";
         Mockito.when(appUserRepository.findByName(Mockito.anyString())).thenReturn(appUser);
 
-        AppUser returnedUser = appUserService.getByName(name);
+        try {
+            AppUser returnedUser = appUserService.getByName(name);
+            Assert.fail("Expected an UsernameNotFoundException to be thrown");
+        } catch (UsernameNotFoundException e) {
+            Assert.assertThat(e.getMessage(), is(String.format("User %s not found", name)));
+        }
 
         Mockito.verify(appUserRepository, Mockito.times(1)).findByName(Mockito.anyString());
 
@@ -91,7 +99,7 @@ public class AppUserServiceImplTest {
         Assert.assertEquals(1, appUser.getRoles().size());
     }
 
-    @Test(expected = EntityExistsException.class)
+    @Test
     public void createException() {
         UserRole userRole = new UserRole();
         AppUserDto appUserDto = new AppUserDto();
@@ -104,15 +112,18 @@ public class AppUserServiceImplTest {
         Mockito.when(userRoleRepository.getOne(Mockito.anyLong())).thenReturn(userRole);
         Mockito.when(appUserRepository.save(appUser)).thenReturn(appUser);
 
-        appUserService.create(appUserDto, "ROLE_USER");
+        try {
+            appUserService.create(appUserDto, "ROLE_USER");
+            Assert.fail("Expected an EntityExistsException to be thrown");
+        } catch (EntityExistsException e) {
+            Assert.assertThat(e.getMessage(), is(String.format("User %s already exists", appUserDto.getName())));
+        }
 
         Mockito.verify(appUserRepository, Mockito.times(1)).findByName(Mockito.anyString());
         Mockito.verify(modelMapper, Mockito.never()).map(Mockito.any(AppUserDto.class), Mockito.eq(AppUser.class));
         Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(Mockito.anyString());
         Mockito.verify(appUserRepository, Mockito.never()).save(appUser);
         Mockito.verify(userRoleRepository, Mockito.never()).getOne(Mockito.anyLong());
-        Assert.assertEquals("pass", appUser.getPassword());
-        Assert.assertEquals(0, appUser.getRoles().size());
     }
 
     @Test

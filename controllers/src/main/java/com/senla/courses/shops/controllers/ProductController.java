@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/products")
-@Api(tags = {"Product controller"}, description = "Some operations on the product")
+@Api(tags = {"Product controller. Some operations on the product"})
 public class ProductController {
 
     private ProductService productService;

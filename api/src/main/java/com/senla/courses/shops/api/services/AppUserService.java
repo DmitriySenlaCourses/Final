@@ -15,5 +15,5 @@ public interface AppUserService {
 
     String login(AppUserDto appUserDto);
 
-    void Listener(String message);
+    void listener(String message);
 }

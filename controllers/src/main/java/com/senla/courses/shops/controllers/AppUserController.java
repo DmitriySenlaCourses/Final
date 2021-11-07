@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @RequestMapping("/users")
-@Api(tags = {"User Controller"}, description = "Some operations on the user")
+@Api(tags = {"User Controller. Some operations on the user"})
 public class AppUserController {
 
     private AppUserService appUserService;
@@ -46,10 +46,10 @@ public class AppUserController {
             @ApiResponse(code = 400, message = "User already exists")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> create(@RequestBody AppUserDto appUserDto, Authentication authentication) {
-        String role = null;
+        String role = "ROLE_USER";
         if (authentication != null) {
-            GrantedAuthority authority = authentication.getAuthorities().stream().findFirst().orElseGet(null);
-            role = authority == null ? null : authority.getAuthority();
+            GrantedAuthority authority = authentication.getAuthorities().iterator().next();
+            role = authority.getAuthority();
         }
         appUserService.create(appUserDto, role);
         return ResponseEntity.noContent().build();
